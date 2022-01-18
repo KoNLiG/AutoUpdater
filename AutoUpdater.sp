@@ -105,12 +105,13 @@ void VersionRequestCB(HTTPResponse response, any value, const char[] error)
 	delete jsonObject;
 	jsonObject = JSONObject.FromString(json_str);
 	
-	if (!jsonObject.GetBool("up_to_date"))
+	if (jsonObject.HasKey("up_to_date") && !jsonObject.GetBool("up_to_date"))
 	{
 		PerformServerUpdate(jsonObject.GetInt("required_version"));
 	}
 	
-	delete jsonObject;
+	// Not really required since we're shutting down the server in 'PerformServerUpdate()'
+	// delete jsonObject;
 }
 
 void PerformServerUpdate(int required_version)
