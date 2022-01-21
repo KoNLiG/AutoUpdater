@@ -17,14 +17,14 @@ enum struct VersionRequest
 	
 	bool Init()
 	{
-		char AppID[11], PatchVersion[11];
+		char appID[11], PatchVersion[11];
 		
-		if (!SteamInfo_GetValue("AppID", AppID, sizeof(AppID)) || !SteamInfo_GetValue("PatchVersion", PatchVersion, sizeof(PatchVersion)))
+		if (!SteamInfo_GetValue("appID", appID, sizeof(appID)) || !SteamInfo_GetValue("PatchVersion", PatchVersion, sizeof(PatchVersion)))
 		{
 			return false;
 		}
 		
-		Format(this.base_url, sizeof(VersionRequest::base_url), REQUEST_BASE_URL, AppID, PatchVersion);
+		Format(this.base_url, sizeof(VersionRequest::base_url), REQUEST_BASE_URL, appID, PatchVersion);
 		
 		// Initialization succeeded.
 		return true;
