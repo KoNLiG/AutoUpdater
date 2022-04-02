@@ -51,18 +51,21 @@ public Plugin myinfo =
 
 public void OnPluginStart()
 {
-	// Initialize 'g_VersionRequest'
-	if (!g_VersionRequest.Init())
-	{
-		SetFailState("Failed to properly initialize 'g_VersionRequest'");
-	}
-	
 	// ConVars Configuration.
 	g_UpdateCheckInterval = CreateConVar("autoupdater_update_check_interval", "5", "Interval for update checks. (Represented by minutes)", .hasMin = true, .min = 1.0);
 	AutoExecConfig();
 	
 	// Every [g_UpdateCheckInterval.FloatValue * 60.0] minutes check for a server update.
 	CreateTimer(g_UpdateCheckInterval.FloatValue * 60.0, Timer_UpdateCheck, .flags = TIMER_REPEAT);
+}
+
+public void OnLibraryAdded(const char[] name)
+{
+	// Initialize 'g_VersionRequest'
+	if (StrEqual(name, STEAM_INFO_LIB_NAME) && !g_VersionRequest.Init())
+	{
+		SetFailState("Failed to properly initialize 'g_VersionRequest'");
+	}
 }
 
 // Attempt to perform a server update.
@@ -109,9 +112,11 @@ void VersionRequestCB(HTTPResponse response, any value, const char[] error)
 	{
 		PerformServerUpdate(jsonObject.GetInt("required_version"));
 	}
-	
-	// Not really required since we're shutting down the server in 'PerformServerUpdate()'
-	// delete jsonObject;
+	else
+	{
+		// Delete only if we aren't restarting the server.
+		delete jsonObject;
+	}
 }
 
 void PerformServerUpdate(int required_version)
